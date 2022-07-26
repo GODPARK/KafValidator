@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/GODPARK/KafValidator/config"
+	"github.com/GODPARK/KafValidator/producer"
 )
 
 func main() {
@@ -18,12 +19,17 @@ func main() {
 	}
 	fmt.Println(configData)
 
+	p := &producer.ProducerRunner{}
+	if err := p.KafkaProducerInit(configData); err != nil {
+		fmt.Println("Producer error: " + err.Error())
+	}
+
 	var wait sync.WaitGroup
 	wait.Add(2)
 
 	go func() {
 		defer wait.Done()
-
+		p.Send("hello world")
 	}()
 
 	go func() {

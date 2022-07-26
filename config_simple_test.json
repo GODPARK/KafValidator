@@ -1,18 +1,18 @@
 {
-    "bootstrapServer":[
-       "localhost:9092"
-    ],
-    "topic":"test-topic",
-    "producer":{
-       "clientId":"test-client",
-       "acks":"all"
-    },
-    "consumer":{
-       "groupId":"test-consumer-group",
-       "autoOffsetReset":"none"
-    },
-    "simple":{
-       "msgCount":10,
-       "msgIntervalSec":2
-    }
- }
+   "bootstrapServer":[
+      "127.0.0.1:9092"
+   ],
+   "topic":"test-topic",
+   "producer":{
+      "clientId":"test-client",
+      "acks":"0"
+   },
+   "consumer":{
+      "groupId":"test-consumer-group",
+      "autoOffsetReset":"none"
+   },
+   "simple":{
+      "msgCount":10,
+      "msgIntervalSec":2
+   }
+}

@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 )
@@ -82,14 +83,19 @@ func (config *Config) isValidBootstrapServer() error {
 }
 
 func (config *Config) isValidProducerAcks() error {
-	switch config.Producer.Acks {
-	case "all":
-	case "-1":
-	case "0":
-	case "1":
-		return nil
+	fmt.Println(config.Producer.Acks)
+	// switch config.Producer.Acks {
+	// case "all":
+	// case "-1":
+	// case "0":
+	// case "1":
+	// 	return nil
+	// }
+	if config.Producer.Acks != "all" && config.Producer.Acks != "0" && config.Producer.Acks != "1" && config.Producer.Acks != "-1" {
+		return errors.New("please check Producer.acks! acks value is [all , -1, 0 ,1] only")
 	}
-	return errors.New("please check Producer.acks! acks value is [all , -1, 0 ,1] only")
+	return nil
+
 }
 
 func (config *Config) isValidConsumerAutoOffsetReset() error {
@@ -117,6 +123,17 @@ func isValidFile(filePath string) error {
 	} else {
 		return err
 	}
+}
+
+func (config *Config) GetBootStrapServer() string {
+	var bootstrapServerStr = ""
+	for i := 0; i < len(config.BootstrapServer); i++ {
+		bootstrapServerStr += config.BootstrapServer[i]
+		if i != len(config.BootstrapServer)-1 {
+			bootstrapServerStr += ","
+		}
+	}
+	return bootstrapServerStr
 }
 
 func (config *Config) ShowProducerConfig() {
