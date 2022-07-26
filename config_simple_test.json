@@ -1,6 +1,5 @@
 {
-    "logFile": "",
-    "bootsrapServer":[
+    "bootstrapServer":[
        "localhost:9092"
     ],
     "topic":"test-topic",
@@ -10,7 +9,7 @@
     },
     "consumer":{
        "groupId":"test-consumer-group",
-       "autoOffsetReset":"auto"
+       "autoOffsetReset":"none"
     },
     "simple":{
        "msgCount":10,
