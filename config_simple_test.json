@@ -1,0 +1,19 @@
+{
+    "logFile": "",
+    "bootsrapServer":[
+       "localhost:9092"
+    ],
+    "topic":"test-topic",
+    "producer":{
+       "clientId":"test-client",
+       "acks":"all"
+    },
+    "consumer":{
+       "groupId":"test-consumer-group",
+       "autoOffsetReset":"auto"
+    },
+    "simple":{
+       "msgCount":10,
+       "msgIntervalSec":2
+    }
+ }
