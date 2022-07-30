@@ -5,11 +5,11 @@
    "topic":"test-topic",
    "producer":{
       "clientId":"test-client",
-      "acks":"0"
+      "acks":"1"
    },
    "consumer":{
-      "groupId":"test-consumer-group",
-      "autoOffsetReset":"none"
+      "groupId":"tcg4",
+      "autoOffsetReset":"largest"
    },
    "simple":{
       "msgCount":10,

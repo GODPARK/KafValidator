@@ -3,7 +3,6 @@ package config
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"os"
 )
@@ -38,7 +37,7 @@ type AllTimeModeConfig struct {
 	LogFile        string `json:"logFile"`
 }
 
-func (config *Config) InitConfig(configFilePath string) (*Config, error) {
+func InitConfig(configFilePath string) (*Config, error) {
 	if configFilePath == "" {
 		return nil, errors.New("config file path is empty!")
 	}
@@ -57,7 +56,7 @@ func (config *Config) InitConfig(configFilePath string) (*Config, error) {
 	}
 
 	if err := configData.isValidBootstrapServer(); err != nil {
-		return nil, err
+		return nil, errors.New("bootstrap server is not valid")
 	}
 	if err := configData.isValidProducerAcks(); err != nil {
 		return nil, err
@@ -72,6 +71,18 @@ func (config *Config) InitConfig(configFilePath string) (*Config, error) {
 		return nil, err
 	}
 
+	// if err := configData.isValidConsumerAutoOffsetReset(); err != nil {
+	// 	return nil, err
+	// }
+
+	if err := configData.isValidProducerAcks(); err != nil {
+		return nil, err
+	}
+
+	if configData.Simple.MsgCount <= 0 {
+		return nil, errors.New("Error simple.msgCount is not valid")
+	}
+
 	return configData, nil
 }
 
@@ -83,14 +94,6 @@ func (config *Config) isValidBootstrapServer() error {
 }
 
 func (config *Config) isValidProducerAcks() error {
-	fmt.Println(config.Producer.Acks)
-	// switch config.Producer.Acks {
-	// case "all":
-	// case "-1":
-	// case "0":
-	// case "1":
-	// 	return nil
-	// }
 	if config.Producer.Acks != "all" && config.Producer.Acks != "0" && config.Producer.Acks != "1" && config.Producer.Acks != "-1" {
 		return errors.New("please check Producer.acks! acks value is [all , -1, 0 ,1] only")
 	}
@@ -99,13 +102,10 @@ func (config *Config) isValidProducerAcks() error {
 }
 
 func (config *Config) isValidConsumerAutoOffsetReset() error {
-	switch config.Consumer.AutoOffsetReset {
-	case "latest":
-	case "earliest":
-	case "none":
-		return nil
+	if config.Consumer.AutoOffsetReset != "latest" && config.Consumer.AutoOffsetReset != "earliest" && config.Consumer.AutoOffsetReset != "none" {
+		return errors.New("please check Consumer.autoOffsetReset! autoOffsetRest value is [latest, earliest, none] only")
 	}
-	return errors.New("please check Consumer.autoOffsetReset! autoOffsetRest value is [latest, earliest, none] only")
+	return nil
 }
 
 func isValidString(value string) error {

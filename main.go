@@ -4,37 +4,44 @@ import (
 	"flag"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/GODPARK/KafValidator/config"
+	"github.com/GODPARK/KafValidator/consumer"
 	"github.com/GODPARK/KafValidator/producer"
 )
 
 func main() {
 	configPath := flag.String("config", "", "config.toml file path")
 	flag.Parse()
-	configObject := &config.Config{}
-	configData, err := configObject.InitConfig(*configPath)
+	configData, err := config.InitConfig(*configPath)
 	if err != nil {
-		fmt.Printf("Config Error Please check your config --> %s", err)
-	}
-	fmt.Println(configData)
-
-	p := &producer.ProducerRunner{}
-	if err := p.KafkaProducerInit(configData); err != nil {
-		fmt.Println("Producer error: " + err.Error())
+		panic("Config Error Please check your config --> " + err.Error())
 	}
 
 	var wait sync.WaitGroup
 	wait.Add(2)
 
-	go func() {
-		defer wait.Done()
-		p.Send("hello world")
-	}()
+	cInit, err := consumer.KafkaConsumerInit(configData)
+	if err != nil {
+		panic("Consumer Init Error: " + err.Error())
+	}
+	pInit, err := producer.KafkaProducerInit(configData)
+	if err != nil {
+		panic("Producer Init Error: " + err.Error())
+	}
 
-	go func() {
+	go func(p *producer.ProducerRunner) {
 		defer wait.Done()
-	}()
+		fmt.Println("producer start")
+		p.Pub(time.Now().String())
+	}(pInit)
+
+	go func(c *consumer.ConsumerRunner) {
+		defer wait.Done()
+		fmt.Println("consumer start")
+		c.Sub()
+	}(cInit)
 
 	wait.Wait()
 
