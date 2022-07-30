@@ -23,6 +23,7 @@ type ConsumerRunner struct {
 		average int
 		success int
 		fail    int
+		etc     int
 	}
 }
 
@@ -31,7 +32,7 @@ func KafkaConsumerInit(config *config.Config, key *util.MsgKey) (*ConsumerRunner
 	runner, err := kafka.NewConsumer(&kafka.ConfigMap{
 		"bootstrap.servers": config.GetBootStrapServer(),
 		"group.id":          config.Consumer.GroupID,
-		"auto.offset.reset": config.Consumer.AutoOffsetReset})
+		"auto.offset.reset": env.AUTO_OFFSET_RESET})
 	if err != nil {
 		return nil, errors.New("Kafka Consumer Init Error: " + err.Error())
 	}
@@ -50,6 +51,7 @@ func (consumer *ConsumerRunner) Sub() {
 	run := true
 	msgCount := 0
 	subMsgCount := 0
+	etcCount := 0
 	successMsgCount := 0
 	for run {
 		ev := consumer.Runner.Poll(env.DEFAULT_POLL_INTERVAL_MS)
@@ -65,13 +67,16 @@ func (consumer *ConsumerRunner) Sub() {
 						consumer.Result.diff = append(consumer.Result.diff, now-int64(timestamp))
 						successMsgCount++
 					}
+					subMsgCount++
+				} else {
+					etcCount++
 				}
-				subMsgCount++
 				consumer.Runner.Commit()
 
 				if subMsgCount >= consumer.MsgCount {
 					consumer.Result.success = successMsgCount
 					consumer.Result.fail = consumer.MsgCount - successMsgCount
+					consumer.Result.etc = etcCount
 					run = false
 				}
 			}
@@ -90,9 +95,12 @@ func (consumer *ConsumerRunner) ShowResult() {
 	for i := 0; i < len(consumer.Result.diff); i++ {
 		tmp += consumer.Result.diff[0]
 	}
-	avg := int(tmp) / len(consumer.Result.diff)
-
-	consumer.Result.average = avg
+	if tmp == 0 {
+		consumer.Result.average = -1
+	} else {
+		avg := int(tmp) / len(consumer.Result.diff)
+		consumer.Result.average = avg
+	}
 
 	colorReset := "\033[0m"
 	colorRed := "\033[31m"
@@ -102,5 +110,7 @@ func (consumer *ConsumerRunner) ShowResult() {
 		colorGreen, colorReset, colorGreen, consumer.Result.success, colorReset)
 	fmt.Printf("[CONSUMER] Msg %sSub Fail%s Count: %s%d%s\n",
 		colorRed, colorReset, colorRed, consumer.Result.fail, colorReset)
+	fmt.Printf("[CONSUMER] Msg %sSub Other%s Count: %s%d%s\n",
+		colorRed, colorReset, colorRed, consumer.Result.etc, colorReset)
 	fmt.Printf("[CONSUMER] Msg Pub->Sub Time(average): %s%d%s ms\n", colorGreen, consumer.Result.average, colorReset)
 }

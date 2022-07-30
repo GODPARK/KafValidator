@@ -72,10 +72,6 @@ func InitConfig(configFilePath string) (*Config, error) {
 		return nil, err
 	}
 
-	// if err := configData.isValidConsumerAutoOffsetReset(); err != nil {
-	// 	return nil, err
-	// }
-
 	if err := configData.isValidProducerAcks(); err != nil {
 		return nil, err
 	}
@@ -100,13 +96,6 @@ func (config *Config) isValidProducerAcks() error {
 	}
 	return nil
 
-}
-
-func (config *Config) isValidConsumerAutoOffsetReset() error {
-	if config.Consumer.AutoOffsetReset != "latest" && config.Consumer.AutoOffsetReset != "earliest" && config.Consumer.AutoOffsetReset != "none" {
-		return errors.New("please check Consumer.autoOffsetReset! autoOffsetRest value is [latest, earliest, none] only")
-	}
-	return nil
 }
 
 func isValidString(value string) error {

@@ -8,10 +8,9 @@
       "acks":"1"
    },
    "consumer":{
-      "groupId":"tcg3",
-      "autoOffsetReset":"earliest"
+      "groupId":"test03"
    },
    "simple":{
-      "msgCount":10
+      "msgCount":100
    }
 }

@@ -1,5 +1,10 @@
 package main
 
+/**
+@author Park Jeong Hyun
+@email rootjh937dev@gmail.com
+*/
+
 import (
 	"flag"
 	"fmt"
@@ -43,9 +48,15 @@ func main() {
 		pInit.Runner.Close()
 		cInit.Runner.Close()
 		fmt.Printf("close job is success.. exit!\n")
+		fmt.Printf("################### \033[36m Result \033[0m ####################\n")
+		configData.ShowConfig()
+		pInit.ShowResult()
+		cInit.ShowResult()
+		fmt.Printf("#################################################\n")
 		os.Exit(1)
 	}()
 
+	fmt.Printf("\033[32m Running...\033[0m please waiting\n")
 	var wait sync.WaitGroup
 	wait.Add(2)
 
