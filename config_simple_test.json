@@ -1,6 +1,6 @@
 {
    "bootstrapServer":[
-      "127.0.0.1:9092"
+      "localhost:9092"
    ],
    "topic":"test-topic",
    "producer":{
@@ -8,11 +8,10 @@
       "acks":"1"
    },
    "consumer":{
-      "groupId":"tcg4",
-      "autoOffsetReset":"largest"
+      "groupId":"tcg3",
+      "autoOffsetReset":"earliest"
    },
    "simple":{
-      "msgCount":10,
-      "msgIntervalSec":2
+      "msgCount":10
    }
 }

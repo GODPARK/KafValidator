@@ -3,12 +3,15 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
+	"os/signal"
 	"sync"
-	"time"
+	"syscall"
 
 	"github.com/GODPARK/KafValidator/config"
 	"github.com/GODPARK/KafValidator/consumer"
 	"github.com/GODPARK/KafValidator/producer"
+	"github.com/GODPARK/KafValidator/util"
 )
 
 func main() {
@@ -19,30 +22,54 @@ func main() {
 		panic("Config Error Please check your config --> " + err.Error())
 	}
 
-	var wait sync.WaitGroup
-	wait.Add(2)
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
-	cInit, err := consumer.KafkaConsumerInit(configData)
+	TestKey := util.NewUUID()
+	cInit, err := consumer.KafkaConsumerInit(configData, TestKey)
 	if err != nil {
 		panic("Consumer Init Error: " + err.Error())
 	}
-	pInit, err := producer.KafkaProducerInit(configData)
+	pInit, err := producer.KafkaProducerInit(configData, TestKey)
 	if err != nil {
 		panic("Producer Init Error: " + err.Error())
 	}
 
+	go func() {
+		sig := <-sigs
+		fmt.Printf("\nGET interrupt: %s -> producer , consumer close work... waiting please\n", sig.String())
+		pInit.Runner.Flush(1000)
+		cInit.Runner.Commit()
+		pInit.Runner.Close()
+		cInit.Runner.Close()
+		fmt.Printf("close job is success.. exit!\n")
+		os.Exit(1)
+	}()
+
+	var wait sync.WaitGroup
+	wait.Add(2)
+
 	go func(p *producer.ProducerRunner) {
 		defer wait.Done()
-		fmt.Println("producer start")
-		p.Pub(time.Now().String())
+		p.Pub()
 	}(pInit)
 
 	go func(c *consumer.ConsumerRunner) {
 		defer wait.Done()
-		fmt.Println("consumer start")
 		c.Sub()
 	}(cInit)
 
 	wait.Wait()
 
+	pInit.Runner.Flush(1000)
+	cInit.Runner.Commit()
+	pInit.Runner.Close()
+	cInit.Runner.Close()
+
+	fmt.Printf("\n\n")
+	fmt.Printf("################### \033[36m Result \033[0m ####################\n")
+	configData.ShowConfig()
+	pInit.ShowResult()
+	cInit.ShowResult()
+	fmt.Printf("#################################################\n")
 }
