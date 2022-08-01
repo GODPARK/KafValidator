@@ -31,11 +31,12 @@ func main() {
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
 	TestKey := util.NewUUID()
-	cInit, err := consumer.KafkaConsumerInit(configData, TestKey)
+	Context := util.NewContext(configData)
+	cInit, err := consumer.KafkaConsumerInit(configData, TestKey, Context)
 	if err != nil {
 		panic("Consumer Init Error: " + err.Error())
 	}
-	pInit, err := producer.KafkaProducerInit(configData, TestKey)
+	pInit, err := producer.KafkaProducerInit(configData, TestKey, Context)
 	if err != nil {
 		panic("Producer Init Error: " + err.Error())
 	}
@@ -48,11 +49,7 @@ func main() {
 		pInit.Runner.Close()
 		cInit.Runner.Close()
 		fmt.Printf("close job is success.. exit!\n")
-		fmt.Printf("################### \033[36m Result \033[0m ####################\n")
-		configData.ShowConfig()
-		pInit.ShowResult()
-		cInit.ShowResult()
-		fmt.Printf("#################################################\n")
+		Context.ShowResult()
 		os.Exit(1)
 	}()
 
@@ -77,10 +74,6 @@ func main() {
 	pInit.Runner.Close()
 	cInit.Runner.Close()
 
-	fmt.Printf("\n\n")
-	fmt.Printf("################### \033[36m Result \033[0m ####################\n")
-	configData.ShowConfig()
-	pInit.ShowResult()
-	cInit.ShowResult()
-	fmt.Printf("#################################################\n")
+	Context.ShowResult()
+
 }

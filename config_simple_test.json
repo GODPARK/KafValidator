@@ -5,12 +5,12 @@
    "topic":"test-topic",
    "producer":{
       "clientId":"test-client",
-      "acks":"1"
+      "acks":"0"
    },
    "consumer":{
-      "groupId":"test03"
+      "groupId":"test05"
    },
    "simple":{
-      "msgCount":100
+      "msgCount":1000
    }
 }

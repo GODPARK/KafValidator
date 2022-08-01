@@ -3,7 +3,6 @@ package config
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"os"
 )
@@ -124,10 +123,4 @@ func (config *Config) GetBootStrapServer() string {
 		}
 	}
 	return bootstrapServerStr
-}
-
-func (config *Config) ShowConfig() {
-	fmt.Printf("[CONFIG] Kafka Broker : %s\n", config.GetBootStrapServer())
-	fmt.Printf("[CONFIG] Test Target Topic : %s\n", config.Topic)
-	fmt.Printf("[CONFIG] Set Msg Count : %d\n", config.Simple.MsgCount)
 }

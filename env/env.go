@@ -7,5 +7,5 @@ const (
 const (
 	AUTO_OFFSET_RESET        = "earliest"
 	DEFAULT_POLL_INTERVAL_MS = 1000
-	THRESHOLD_MSG_COUNT      = 60
+	THRESHOLD_MSG_COUNT      = 120
 )

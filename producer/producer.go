@@ -15,13 +15,10 @@ type ProducerRunner struct {
 	Topic    string
 	MsgCount int
 	Key      string
-	Result   struct {
-		success int
-		fail    int
-	}
+	Context  *util.Context
 }
 
-func KafkaProducerInit(config *config.Config, key *util.MsgKey) (*ProducerRunner, error) {
+func KafkaProducerInit(config *config.Config, key *util.MsgKey, context *util.Context) (*ProducerRunner, error) {
 	producerRunner := &ProducerRunner{}
 	runner, err := kafka.NewProducer(&kafka.ConfigMap{
 		"bootstrap.servers": config.GetBootStrapServer(),
@@ -35,6 +32,7 @@ func KafkaProducerInit(config *config.Config, key *util.MsgKey) (*ProducerRunner
 	producerRunner.Topic = config.Topic
 	producerRunner.MsgCount = config.Simple.MsgCount
 	producerRunner.Key = key.KeyToString()
+	producerRunner.Context = context
 	return producerRunner, nil
 }
 
@@ -42,8 +40,9 @@ func (producer *ProducerRunner) Pub() {
 	delivery_chan := make(chan kafka.Event, 10000)
 	successMsgCount := 0
 	for i := 0; i < producer.MsgCount; i++ {
-		now := fmt.Sprint(time.Now().UnixNano() / 1000000)
-		msg := producer.Key + "," + now
+		now := (time.Now().UnixNano() / 1000000)
+		nowStr := fmt.Sprint(now)
+		msg := producer.Key + "," + nowStr
 		producer.Runner.Produce(&kafka.Message{
 			TopicPartition: kafka.TopicPartition{Topic: &producer.Topic, Partition: kafka.PartitionAny},
 			Value:          []byte(msg)},
@@ -56,21 +55,11 @@ func (producer *ProducerRunner) Pub() {
 			fmt.Printf("Delivery failed: %v\n", m.TopicPartition.Error)
 		} else {
 			successMsgCount++
+			producer.Context.AppendProducerSDiff(now)
 		}
 	}
-	producer.Result.success = successMsgCount
-	producer.Result.fail = producer.MsgCount - successMsgCount
+	producer.Context.Producer.SuccessCount = successMsgCount
+	producer.Context.Producer.FailCount = producer.MsgCount - successMsgCount
 	producer.Runner.Flush(10)
 	close(delivery_chan)
-}
-
-func (producer *ProducerRunner) ShowResult() {
-	colorReset := "\033[0m"
-	colorRed := "\033[31m"
-	colorGreen := "\033[32m"
-
-	fmt.Printf("[PRODUCER] Msg %sPub Success%s Count: %s%d%s\n",
-		colorGreen, colorReset, colorGreen, producer.Result.success, colorReset)
-	fmt.Printf("[PRODUCER] Msg %sPub Fail%s Count: %s%d%s\n",
-		colorRed, colorReset, colorRed, producer.Result.fail, colorReset)
 }
