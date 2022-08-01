@@ -1,16 +1,17 @@
 {
    "bootstrapServer":[
-      "localhost:9092"
+      "localhost:9092",
+      "localhost:9093"
    ],
    "topic":"test-topic",
    "producer":{
       "clientId":"test-client",
-      "acks":"0"
+      "acks":"2"
    },
    "consumer":{
       "groupId":"test05"
    },
    "simple":{
-      "msgCount":1000
+      "msgCount":10
    }
 }
