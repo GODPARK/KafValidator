@@ -16,11 +16,14 @@ Kafka 구성 시 정상 동작 여부를 확인하기 위한 기본적인 Test A
 > 주의) 서비스용 토픽에 진행할 경우 consumer group이 다르면 이슈가 없을 수 있으나(장담할 수는 없습니다.) 혹여 consumer group이 같았을 경우 서비스 메시지가 commit되는 이슈가 있을 수 있습니다.
 
 ### 4) Download
-Release 에서 알맞는 버전을 다운로드 하여 실행
+[Release](https://github.com/GODPARK/KafValidator/releases) 에서 알맞는 버전을 다운로드 하여 실행
 
 
 ### 5) 실행 방법
 ```bash
+# 압축 해제 후
+$ tar -xvzf kafvld_VERSION.tar.gz ./
+
 # run with config file
 $ kafvld -config ${CONFIG_PATH}
 ```
@@ -29,8 +32,11 @@ $ kafvld -config ${CONFIG_PATH}
 ```json
 {  
     // kafka broker address (list)
+    // ex) kafka 서버 입력 3대일 경우 아래 내용 참조
    "bootstrapServer":[
-      "localhost:9092"
+      "kafka01:9092",
+      "kafka02:9092",
+      "kafka03.9092"
    ],
    // kafka test topic
    "topic":"test-topic",
@@ -42,6 +48,7 @@ $ kafvld -config ${CONFIG_PATH}
         // 0 : broker does not send any response or acks
         // -1 or all: all broker committed ( sync replica )
         // 1 : one broker committed
+        // 권장: 1
       "acks":"1"
    },
    // consumer
