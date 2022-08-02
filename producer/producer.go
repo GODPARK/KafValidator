@@ -25,7 +25,6 @@ func KafkaProducerInit(config *config.Config, key *util.MsgKey, context *util.Co
 		"client.id":         config.Producer.ClientID,
 		"acks":              config.Producer.Acks})
 	if err != nil {
-		fmt.Println("1" + err.Error())
 		return nil, errors.New("Kafka Producer Init Error: " + err.Error())
 	}
 	producerRunner.Runner = runner

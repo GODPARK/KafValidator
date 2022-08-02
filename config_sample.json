@@ -1,0 +1,15 @@
+{
+    "bootstrapServer":[
+    ],
+    "topic":"",
+    "producer":{
+       "clientId":"",
+       "acks":"1"
+    },
+    "consumer":{
+       "groupId":""
+    },
+    "simple":{
+       "msgCount":10
+    }
+ }

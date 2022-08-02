@@ -1,11 +1,12 @@
 {
    "bootstrapServer":[
-      "localhost:9092"
+      "kafka.pjhdev.site:9092",
+      "kafka.pjhdev.site:9093"
    ],
    "topic":"test-topic",
    "producer":{
       "clientId":"test-client",
-      "acks":"1"
+      "acks":"2"
    },
    "consumer":{
       "groupId":"test05"
