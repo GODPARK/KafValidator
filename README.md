@@ -24,6 +24,11 @@ Kafka 구성 시 정상 동작 여부를 확인하기 위한 기본적인 Test A
 # 압축 해제 후
 $ tar -xvzf kafvld_VERSION.tar.gz ./
 
+# 압축 해제 후 결과, 이후 config 수정 후 실행
+$ ls
+kafvld
+config_sample.json
+
 # run with config file
 $ kafvld -config ${CONFIG_PATH}
 ```
@@ -62,4 +67,31 @@ $ kafvld -config ${CONFIG_PATH}
       "msgCount":100
    }
 }
+```
+
+### 7) 실행 결과 예시
+```bash
+TEST KEY: 08fc3467-a02d-480d-964c-f7f557e4493d # 테스트 키 ( 테스트 마다 다름 )
+ Running... please waiting
+
+
+################### Reslut ####################
+[CONFIG] Kafka Broker: localhost:9092 # 카프카 브로커 리스트
+[CONFIG] Target Topic: test-topic # 토픽 명
+[CONFIG] Total Msg Count: 10 # 테스트 메시지 발행 갯수
+
+[PRODUCER] Msg Pub Success Count: 10 # 메세지 pub 성공 수
+[PRODUCER] Msg Pub Fail Count: 0  # 메세지 pub 실패 수
+[PRODUCER] Send Msg Average: 79 ms  # 메세지 전송 평균 소요 시간
+[PRODUCER] Send Msg Max Time: 79 ms # 메세지 전송 건수 중 최대 소요 시간
+[PRODUCER] Send Msg Min Time: 9 ms # 메세지 전송 건수 중 최소 소요 시간
+
+[CONSUMER] Msg Sub Success Count: 10 # 메세지 sub 성공 수
+[CONSUMER] Msg Sub Fail Count: 0 # 메시지 sub 실패 수
+# 현재 테스트와 무관한 메시지 수신시 etc 카운트 증가 (보통 consumer group 변경될 경우 커밋되지 않은 메세지 유입 가능)
+[CONSUMER] Msg Sub Etc Count: 0 
+[CONSUMER] Pub->Sub Msg Time Average: 133 ms # 메세지 전송->수신 평균 소요 시간
+[CONSUMER] Pub->Sub Msg Time Max: 133 ms # 메세지 전송->수신 최대 소요 시간
+[CONSUMER] Pub->Sub Msg Time Min: 62 ms # 메세지 전송->수신 최소 소요 시간
+#################################################
 ```

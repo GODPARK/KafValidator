@@ -23,3 +23,8 @@ build_ubuntu:
 	-docker cp kafvld_ubuntu:/root/kafvld_ubuntu_x86_64.tar.gz ./build/ubuntu/
 	-docker stop kafvld_ubuntu
 	-docker rm kafvld_ubuntu
+
+build_mac:
+	-rm -f kafvld_mac_x86_64.tar.gz 
+	go build -o kafvld
+	tar -zcvf kafvld_mac_x86_64.tar.gz kafvld config_sample.json
