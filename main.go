@@ -36,7 +36,13 @@ func main() {
 	if err != nil {
 		panic("Consumer Init Error: " + err.Error())
 	}
-	pInit, err := producer.KafkaProducerInit(configData, TestKey, Context)
+
+	dummy := ""
+	for i := 0; i < configData.Producer.ValueByteSize; i++ {
+		dummy += "a"
+	}
+
+	pInit, err := producer.KafkaProducerInit(configData, TestKey, Context, dummy)
 	if err != nil {
 		panic("Producer Init Error: " + err.Error())
 	}
