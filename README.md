@@ -1,3 +1,5 @@
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/GODPARK/KafValidator) ![GitHub](https://img.shields.io/github/license/GODPARK/Kafvalidator) ![GitHub all releases](https://img.shields.io/github/downloads/GODPARK/KafValidator/total)
+
 # KafValidator
 > * go 언어로 개발
 > * kafka lib 로는 [Kafka Go Client](https://docs.confluent.io/kafka-clients/go/current/overview.html) 을 사용하여 개발
