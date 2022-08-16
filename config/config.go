@@ -17,8 +17,9 @@ type Config struct {
 }
 
 type ProducerConfig struct {
-	ClientID string `json:"clientId"`
-	Acks     string `json:"acks"`
+	ClientID      string `json:"clientId"`
+	Acks          string `json:"acks"`
+	ValueByteSize int    `json:"valueByteSize"`
 }
 
 type ConsumerConfig struct {
@@ -61,6 +62,7 @@ func InitConfig(configFilePath string) (*Config, error) {
 	if err := configData.isValidProducerAcks(); err != nil {
 		return nil, err
 	}
+
 	if err := isValidString(configData.Topic); err != nil {
 		return nil, err
 	}
@@ -77,6 +79,10 @@ func InitConfig(configFilePath string) (*Config, error) {
 
 	if configData.Simple.MsgCount <= 0 {
 		return nil, errors.New("Error simple.msgCount is not valid")
+	}
+
+	if configData.Producer.ValueByteSize < 0 {
+		return nil, errors.New("Error value byte size negative")
 	}
 
 	return configData, nil

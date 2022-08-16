@@ -5,7 +5,8 @@
    "topic":"test-topic",
    "producer":{
       "clientId":"test-client",
-      "acks":"1"
+      "acks":"1",
+      "valueByteSize": 1000
    },
    "consumer":{
       "groupId":"test05"

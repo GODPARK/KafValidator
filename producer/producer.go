@@ -15,10 +15,11 @@ type ProducerRunner struct {
 	Topic    string
 	MsgCount int
 	Key      string
+	Dummy    string
 	Context  *util.Context
 }
 
-func KafkaProducerInit(config *config.Config, key *util.MsgKey, context *util.Context) (*ProducerRunner, error) {
+func KafkaProducerInit(config *config.Config, key *util.MsgKey, context *util.Context, dummy string) (*ProducerRunner, error) {
 	producerRunner := &ProducerRunner{}
 	runner, err := kafka.NewProducer(&kafka.ConfigMap{
 		"bootstrap.servers": config.GetBootStrapServer(),
@@ -32,6 +33,7 @@ func KafkaProducerInit(config *config.Config, key *util.MsgKey, context *util.Co
 	producerRunner.MsgCount = config.Simple.MsgCount
 	producerRunner.Key = key.KeyToString()
 	producerRunner.Context = context
+	producerRunner.Dummy = dummy
 	return producerRunner, nil
 }
 
@@ -41,7 +43,8 @@ func (producer *ProducerRunner) Pub() {
 	for i := 0; i < producer.MsgCount; i++ {
 		now := (time.Now().UnixNano() / 1000000)
 		nowStr := fmt.Sprint(now)
-		msg := producer.Key + "," + nowStr
+		msg := producer.Key + "," + nowStr + "," + producer.Dummy
+
 		producer.Runner.Produce(&kafka.Message{
 			TopicPartition: kafka.TopicPartition{Topic: &producer.Topic, Partition: kafka.PartitionAny},
 			Value:          []byte(msg)},
