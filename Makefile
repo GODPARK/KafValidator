@@ -24,6 +24,14 @@ build_ubuntu:
 	-docker stop kafvld_ubuntu
 	-docker rm kafvld_ubuntu
 
+build_centos:
+	-rm -f ./build/ubuntu/kafvld_centos_x86_64.tar.gz
+	-docker build -f build/centos/Dockerfile -t kafvld-centos .
+	-docker run -d --name kafvld_centos kafvld-centos
+	-docker cp kafvld_centos:/root/kafvld_centos_x86_64.tar.gz ./build/centos/
+	-docker stop kafvld_centos
+	-docker rm kafvld_centos
+
 build_mac:
 	-rm -f kafvld_mac_x86_64.tar.gz 
 	go build -o kafvld
