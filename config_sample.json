@@ -4,7 +4,8 @@
     "topic":"",
     "producer":{
        "clientId":"",
-       "acks":"1"
+       "acks":"1",
+       "valueByteSize": 100
     },
     "consumer":{
        "groupId":""
